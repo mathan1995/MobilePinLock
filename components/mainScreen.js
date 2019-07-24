@@ -19,15 +19,16 @@ import ResetPw from "./resetPassword";
 
 export default class App extends Component {
   state = {
-    pin: "",
-    attempt: 3,
     errorInfo: "",
     toggleView: true,
     validPin: "7890",
-    blocked: false
+    blocked: false,
+    pin: "",
+    maxAttempt: 3,
+    successInfo: ""
   };
 
-  //making promises for the pin attempt fail
+  //making promises for the pin maxAttempt fail
   handleInputPin = async number => {
     console.log(number);
     await this.setState({ pin: this.state.pin + number }, () =>
@@ -41,45 +42,65 @@ export default class App extends Component {
       Alert.alert(
         "Success !",
         "Login Success !!!",
-        [{ text: "DONE", onPress: () => this.handleClearerrorInfo() }],
+        [{ text: "DONE", onPress: () => this.handleClearInfo() }],
         { cancelable: false }
       );
       await this.setState({ pin: "" }, () => console.log(this.state.pin));
-      await this.setState({ attempt: 3 }, () =>
-        console.log(this.state.attempt)
+      await this.setState({ maxAttempt: 3 }, () =>
+        console.log(this.state.maxAttempt)
       );
       console.log("Success");
     } else if ((await this.state.pin.length) === 4) {
       //  Error the message Printed
-      if ((await this.state.attempt) === 3) {
-        await this.setState({ errorInfo: "PIN incorrect" });
+      if ((await this.state.maxAttempt) === 3) {
+        await this.setState(
+          { errorInfo: "PIN incorrect" },
+          this.handleclearSuccessInfo()
+        );
         await this.setState({ pin: "" }, () => console.log(this.state.pin));
-        await this.state.attempt--;
+        await this.state.maxAttempt--;
         return;
       }
-      if ((await this.state.attempt) === 2) {
-        await this.setState({
-          errorInfo: "PIN incorrect. Next incorrect attempt cause Block."
-        });
+      if ((await this.state.maxAttempt) === 2) {
+        await this.setState(
+          {
+            errorInfo: "PIN incorrect => Next incorrect maxAttempt cause Block."
+          },
+          this.handleclearSuccessInfo()
+        );
         await this.setState({ pin: "" }, () => console.log(this.state.pin));
-        await this.state.attempt--;
+        await this.state.maxAttempt--;
         return;
       }
-      if ((await this.state.attempt) <= 1) {
-        await this.setState({
-          errorInfo: "You are currently block . Please contact or reset"
-        });
+      if ((await this.state.maxAttempt) <= 1) {
+        await this.setState(
+          {
+            errorInfo: "You are currently block => Please reset your pin"
+          },
+          this.handleclearSuccessInfo()
+        );
         await this.setState({ pin: "" }, () => console.log(this.state.pin));
-        await this.state.attempt--;
+        await this.state.maxAttempt--;
         return;
       }
     }
   };
+  //clearing success iNfo
+  handleclearSuccessInfo = () => {
+    this.setState({ successInfo: "" });
+  };
+  //clearing Error iNfo
+  handleclearErrorInfo = () => {
+    this.setState({ errorInfo: "" });
+  };
 
   //Clearing the error info by settingNewValue to state
-  handleClearerrorInfo = () => {
+  handleClearInfo = () => {
     this.setState({ errorInfo: "" }, () =>
       console.log("Cleared Error Message !!")
+    );
+    this.setState({ successInfo: "" }, () =>
+      console.log("Cleared Success Message !!")
     );
   };
 
@@ -92,6 +113,10 @@ export default class App extends Component {
   //View Toggle Window
   toggleViewFunc = () => {
     this.setState({ toggleView: !this.state.toggleView });
+    this.setState(
+      { successInfo: "Your New pin 1234" },
+      this.handleclearErrorInfo()
+    );
   };
 
   //Valid Pin Reset Value
@@ -225,6 +250,16 @@ export default class App extends Component {
                 }}
               >
                 {this.state.errorInfo}
+              </Text>
+              <Text
+                style={{
+                  color: "green",
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                {this.state.successInfo}
               </Text>
             </View>
             <View style={{ marginTop: 50, width: "80%" }}>
@@ -478,5 +513,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#333333",
     marginBottom: 5
+  },
+  gridfill:{
+    
   }
 });
