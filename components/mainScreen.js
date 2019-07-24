@@ -7,7 +7,14 @@
  */
 
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Alert
+} from "react-native";
 import ResetPw from "./resetPassword";
 
 export default class App extends Component {
@@ -20,6 +27,7 @@ export default class App extends Component {
     blocked: false
   };
 
+  //making promises for the pin attempt fail
   handleInputPin = async number => {
     console.log(number);
     await this.setState({ pin: this.state.pin + number }, () =>
@@ -30,7 +38,12 @@ export default class App extends Component {
       (await this.state.pin) === this.state.validPin
     ) {
       //  Success the message Printed
-      alert("Login Success");
+      Alert.alert(
+        "Success !",
+        "Login Success !!!",
+        [{ text: "DONE", onPress: () => this.handleClearerrorInfo() }],
+        { cancelable: false }
+      );
       await this.setState({ pin: "" }, () => console.log(this.state.pin));
       await this.setState({ attempt: 3 }, () =>
         console.log(this.state.attempt)
@@ -63,23 +76,53 @@ export default class App extends Component {
     }
   };
 
+  //Clearing the error info by settingNewValue to state
+  handleClearerrorInfo = () => {
+    this.setState({ errorInfo: "" }, () =>
+      console.log("Cleared Error Message !!")
+    );
+  };
+
+  //Clear Pin in the pin Block
   handleClearPin = () => {
     this.setState({ pin: "" }, () => console.log(this.state.pin));
     console.log(this.state.pin);
   };
 
+  //View Toggle Window
   toggleViewFunc = () => {
     this.setState({ toggleView: !this.state.toggleView });
   };
 
-  resetPin = () => {
+  //Valid Pin Reset Value
+  resetPinvalue = () => {
     this.setState({ validPin: "1234" });
   };
 
+  /*Calling Reset Pin value function and makeing 
+  Validation on resetting Process*/
+  resetPin = () => {
+    this.resetPinvalue();
+    Alert.alert(
+      "Confirm Reset !",
+      "Do You want To reset your Pin ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "RESET", onPress: () => this.toggleViewFunc() }
+      ],
+      { cancelable: false }
+    );
+  };
+
+  //Rendering The login pattern UI Pattern
   renderLogin = () => {
     if (this.state.toggleView === true) {
       return (
-        <View style={{ flex: 1, backgroundColor: "#000" }}>
+        <View style={{ flex: 1, backgroundColor: "black" }}>
           <View style={styles.loginContainer}>
             <View style={{ flex: 0.5, backgroundColor: "#000" }} />
             <Text style={styles.title}>Enter Your Pin No </Text>
@@ -167,7 +210,7 @@ export default class App extends Component {
               style={{
                 flexDirection: "row",
                 marginTop: 10,
-                width: "80%",
+                width: "50%",
                 textAlign: "center",
                 justifyContent: "center",
                 alignItems: "center"

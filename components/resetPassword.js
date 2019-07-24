@@ -6,13 +6,13 @@ const Reset = props => (
     <View style={styles.resetContainer}>
       <View>
         <Image
-          style={{ width: 120, height: 120 }}
+          style={{ width: 120, height: 120, marginTop: 60 }}
           source={require("./assets/key.png")}
         />
       </View>
       <View
         style={{
-          marginTop: 50,
+          marginTop: 40,
           justifyContent: "center",
           alignItems: "center",
           width: "100%"
@@ -34,9 +34,6 @@ const Reset = props => (
           style={{ width: 50, height: 50 }}
           source={require("./assets/back.png")}
         />
-        <TouchableOpacity onPress={() => props.toggleViewFunc()}>
-          <Text>Enter PIN again</Text>
-        </TouchableOpacity>
       </View>
 
       <View
@@ -44,13 +41,21 @@ const Reset = props => (
           marginTop: 30,
           padding: 10,
           width: "80%",
+          borderRadius: 100,
           justifyContent: "center",
           alignItems: "center",
           backgroundColor: "#00416A"
         }}
       >
+        {/* */}
         <TouchableOpacity onPress={() => props.resetPin()}>
-          <View style={{ width: "100%", backgroundColor: "#00416A" }}>
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: "#00416A",
+              borderRadius: 50
+            }}
+          >
             <Text style={{ color: "#fff" }}>Reset PIN</Text>
           </View>
         </TouchableOpacity>
